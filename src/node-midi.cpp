@@ -11,7 +11,7 @@ private:
     RtMidiOut* out;
 public:
     static Nan::Persistent<v8::FunctionTemplate> s_ct;
-    static void Init(v8::Handle<v8::Object> target)
+    static void Init(v8::Local<v8::Object> target)
     {
         Nan::HandleScope scope;
 
@@ -155,7 +155,7 @@ public:
     std::queue<MidiMessage*> message_queue;
 
     static Nan::Persistent<v8::FunctionTemplate> s_ct;
-    static void Init(v8::Handle<v8::Object> target)
+    static void Init(v8::Local<v8::Object> target)
     {
         Nan::HandleScope scope;
 
@@ -331,7 +331,7 @@ Nan::Persistent<v8::FunctionTemplate> NodeMidiOutput::s_ct;
 Nan::Persistent<v8::FunctionTemplate> NodeMidiInput::s_ct;
 
 extern "C" {
-    void init (v8::Handle<v8::Object> target)
+    void init (v8::Local<v8::Object> target)
     {
         NodeMidiOutput::Init(target);
         NodeMidiInput::Init(target);
