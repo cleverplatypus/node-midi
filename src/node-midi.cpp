@@ -12,7 +12,7 @@ private:
 public:
     static Nan::Persistent<v8::FunctionTemplate> s_ct;
     static void Init(v8::Local<v8::Object> target)
-    {
+    {       
         Nan::HandleScope scope;
 
         v8::Local<v8::FunctionTemplate> t = Nan::New<v8::FunctionTemplate>(NodeMidiOutput::New);
@@ -73,7 +73,7 @@ public:
             return Nan::ThrowTypeError("First argument must be an integer");
         }
 
-        unsigned int portNumber = info[0]->Uint32Value();
+        unsigned int portNumber = info[0]->Uint32Value(Nan::GetCurrentContext()).FromJust();
         v8::Local<v8::String> result = Nan::New<v8::String>(output->out->getPortName(portNumber).c_str()).ToLocalChecked();
         info.GetReturnValue().Set(result);
     }
@@ -85,7 +85,7 @@ public:
         if (info.Length() == 0 || !info[0]->IsUint32()) {
             return Nan::ThrowTypeError("First argument must be an integer");
         }
-        unsigned int portNumber = info[0]->Uint32Value();
+        unsigned int portNumber = info[0]->Uint32Value(Nan::GetCurrentContext()).FromJust();
         if (portNumber >= output->out->getPortCount()) {
             return Nan::ThrowRangeError("Invalid MIDI port number");
         }
@@ -125,10 +125,10 @@ public:
         }
 
         v8::Local<v8::Object> message = info[0]->ToObject();
-        int32_t messageLength = message->Get(Nan::New<v8::String>("length").ToLocalChecked())->Int32Value();
+        int32_t messageLength = message->Get(Nan::New<v8::String>("length").ToLocalChecked())->Int32Value(Nan::GetCurrentContext()).FromJust();
         std::vector<unsigned char> messageOutput;
         for (int32_t i = 0; i != messageLength; ++i) {
-            messageOutput.push_back(message->Get(Nan::New<v8::Integer>(i))->Int32Value());
+            messageOutput.push_back(message->Get(Nan::New<v8::Integer>(i))->Int32Value(Nan::GetCurrentContext()).FromJust());
         }
         output->out->sendMessage(&messageOutput);
         return;
@@ -259,7 +259,7 @@ public:
             return Nan::ThrowTypeError("First argument must be an integer");
         }
 
-        unsigned int portNumber = info[0]->Uint32Value();
+        unsigned int portNumber = info[0]->Uint32Value(Nan::GetCurrentContext()).FromJust();
         v8::Local<v8::String> result = Nan::New<v8::String>(input->in->getPortName(portNumber).c_str()).ToLocalChecked();
         info.GetReturnValue().Set(result);
     }
@@ -271,7 +271,7 @@ public:
         if (info.Length() == 0 || !info[0]->IsUint32()) {
             return Nan::ThrowTypeError("First argument must be an integer");
         }
-        unsigned int portNumber = info[0]->Uint32Value();
+        unsigned int portNumber = info[0]->Uint32Value(Nan::GetCurrentContext()).FromJust();
         if (portNumber >= input->in->getPortCount()) {
             return Nan::ThrowRangeError("Invalid MIDI port number");
         }
@@ -319,9 +319,9 @@ public:
             return Nan::ThrowTypeError("Arguments must be boolean");
         }
 
-        bool filter_sysex = info[0]->BooleanValue();
-        bool filter_timing = info[1]->BooleanValue();
-        bool filter_sensing = info[2]->BooleanValue();
+        bool filter_sysex = info[0]->BooleanValue(Nan::GetCurrentContext()).FromJust();
+        bool filter_timing = info[1]->BooleanValue(Nan::GetCurrentContext()).FromJust();
+        bool filter_sensing = info[2]->BooleanValue(Nan::GetCurrentContext()).FromJust();
         input->in->ignoreTypes(filter_sysex, filter_timing, filter_sensing);
         return;
     }
